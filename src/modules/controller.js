@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import DOMcontroller from './DOMcontroller';
 import Task from './task';
 import Project from './project';
 
@@ -8,6 +9,8 @@ const storedDataString = JSON.stringify({
       title: 'tzero',
       description: 'tzero-description',
       dueDate: format(new Date(2021, 0, 1), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+      dateAdded: format(new Date(2021, 2, 1), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+      uuid: '234234',
     },
     {
       title: 'tone',
@@ -17,12 +20,10 @@ const storedDataString = JSON.stringify({
   projects: [
     {
       title: 'pzero',
-      description: 'pzero-description',
       tasks: ['tzero', 'tone'],
     },
     {
       title: 'pone',
-      description: 'pone-description',
     },
   ],
 });
@@ -32,7 +33,14 @@ const storedDataString = JSON.stringify({
 const loadTasks = (storedTasks) => {
   const tasks = [];
   storedTasks.forEach((task) => {
-    const newTask = new Task(task.title, task.description, task.dueDate);
+    const newTask = new Task(
+      task.title,
+      task.description,
+      task.dueDate,
+      task.dateAdded,
+      task.dateLastEdited,
+      task.uuid
+    );
     tasks.push(newTask);
   });
   return tasks;
@@ -43,8 +51,8 @@ const loadProjects = (storedProjects, tasks) => {
   storedProjects.forEach((project) => {
     const newProject = new Project(
       project.title,
-      project.description,
-      project.dueData
+      project.dateAdded,
+      project.dateLastEdited
     );
     if (typeof project.tasks !== 'undefined') {
       project.tasks.forEach((taskTitle) => {
@@ -67,6 +75,9 @@ const onLoad = () => {
   console.log(tasks);
   console.log(projects);
   // load page on dom
+  DOMcontroller.renderHomePage(projects);
 };
+
+//---------------------------------------------------------
 
 export default { onLoad };
